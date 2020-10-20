@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            /* Da ne prikazuje div ako ne treba */
+            #result{
+                display:none;
+            }
+            #check{
+                display:none;
+            }
+            #print{
+                display:none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="zadatak_jedan">
+            <h2>Kamen škare papir</h2>
+            <!-- Odabir pomoću gumba koji klikom šalje u funkciju -->
+            <label for="game">Odaberite</label><br/>
+            <button onclick="play(0)">Kamen</button>
+            <button onclick="play(1)">Škare</button>
+            <button onclick="play(2)">Papir</button>
+            <!-- Prikaz rezultata -->
+            <div id="result">
+                <p id="comp_game"></p>
+                <p id="comp_winlose"></p>
+                <p id="count"></p>
+            </div>
+        </div>
+        <div id="zadatak_dva">
+            <h2>Provjera palindroma</h2>
+            <!-- Unos rečenice -->
+            <label for="sentence">Unesite rečenicu</label>
+            <input type="text" id="sentence" name="sentence" />
+            <button onclick="palindrome()">Provjeri</button>
+            <!-- Prikaz rezultata -->
+            <p id="check"></p>
+        </div>
+        <div id="zadatak_tri">
+            <h2>Zbrajanje polja</h2>
+            <!-- Unos brojeva u tekst obliku jer su nepotrebni znakovi maknuti u js-u -->
+            <label for="numbers">Unesite brojeve razdvojene zarezom:</label>
+            <input type="text" id="numbers" name="numbers" />
+            <label for="sum">Unesite zadani zbroj:</label>
+            <input type="number" id="sum" name="sum" />
+            <button onclick="calculate()">Izračunaj</button>
+            <!-- Prikaz rezultata -->
+            <div id="print">
+                <p id="input"></p>
+                <p id="output"></p>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    // Inicijaliziranje brojača van funkcije da se ne briše ponovnim pokretanjem
+    var count = 0;
+    var num_count = 0;
+    // Funkcija za kamen škare papir
+    function play(choice){
+        // Random zaokruženi broj 1-3
+        var random = Math.floor(Math.random() * Math.floor(3));
+        // Pridruživanje imena vrijednosti
+        if(random == 0){
+            var comp_choice = "Kamen";
+        }
+        else if(random == 1){
+            var comp_choice = "Škare";
+        }
+        else{
+            var comp_choice = "Papir";
+        }
+        // Ispis što je računalo odigralo
+        document.getElementById('comp_game').innerHTML = "Računalo je odigralo: " + comp_choice;
+        // Uvjeti tko je pobijedio
+        if(choice == random){
+            document.getElementById('comp_winlose').innerHTML = "Izjednačeno!";
+            document.getElementById("comp_winlose").style.color = "blue";
+        }
+        else if( (choice == 0 && random == 1) || (choice == 1 && random == 2) ||(choice == 2 && random == 0) ){
+            document.getElementById('comp_winlose').innerHTML = "Vi ste pobijedili!";
+            document.getElementById("comp_winlose").style.color = "green";
+            count = count + 1;
+        }
+        else{
+            document.getElementById('comp_winlose').innerHTML = "Računalo je pobijedilo!";
+            document.getElementById("comp_winlose").style.color = "red";
+        }
+        // Prikaz div-a u kojem se nalaze rezultati i dodjeljivanje boda ako je korisnik pobijedio
+        document.getElementById('result').style.display = "block";
+        document.getElementById('count').innerHTML = "Bodovi: " + count;
+    }
+    // Funkcija za prepoznavanje palindroma
+    function palindrome(){
+        // Varijabla koja miče sve znakove osim slova i tranformira slova u mala kako bi mogao prepoznati palindrom
+        var check = document.getElementById("sentence").value.replace(/[^a-zA-Z]+/g, '').toLowerCase();
+        // Odvajanje slova u array
+        var array = check.split('');
+        // Obrnuti array
+        var reverse_array = array.reverse();
+        // Pridruživanje array-a u rečenicu
+        var check_reverse = reverse_array.join('');
+        // Provjera je li array palindrom
+        if(check == check_reverse){
+            document.getElementById("check").innerHTML = "Palindrom";
+        }
+        else{
+            document.getElementById("check").innerHTML = "Nije palindrom";
+        }
+        // Prikaz div-a s rezultatom
+        document.getElementById('result').style.display = "block";
+    }
+    // Funkcija za računanje brojeva
+    function calculate(){
+        // Brisanje svih znakova koji nisu brojevi ili zarez
+        var numbers = document.getElementById("numbers").value.replace(/[^0-9,]+/g, '');
+        // Odvajanje brojeva u array zarezom
+        var array = numbers.split(',');
+        // Provjera jesu li brojevi uneseni da ne bi bio prazno polje u arrayu
+        if (array.includes("")){
+            alert("Krivo uneseni brojevi!");
+            return;
+        }
+        // Micanje znakova koji nisu brojevi iz tražene sume
+        var broj = Number(document.getElementById("sum").value.replace(/[^0-9]+/g, ''));
+        // Sortiranje brojeva u arrayu od najvećeg prema najmanjem
+        var sorted = array.sort(function(a, b){return b-a});
+        // Ispis zadanog arraya i sume
+        document.getElementById("input").innerHTML = "input: N = [" + array + "], B = " + broj;
+        // Inicijaliziranje sume arraya van for petlje
+        var array_sum = 0;
+        // For petlja u kojoj se računa suma i prebrojavaju korišteni brojevi
+        for(i = 0; i < sorted.length; i++){
+            // Inicijaliziranje trenutnog broja u petlji
+            var each = sorted[i];
+            // Zbrajanje trenutnog broja u sumu
+            array_sum = Number(array_sum) + Number(each);
+            // Provjera u konzoli kako petlja funkcionira
+                //console.log(each + "<- U petlji");
+                //console.log(array_sum + "<- Suma");
+                //console.log(broj + "<- Trazeni");
+            // Brojač
+            num_count = num_count+1;
+            // Uvjet koji završava petlju ako se dostigne tražena suma
+            if(array_sum == broj){
+                break;
+            }
+            // Ako se prestigne tražena suma oduzima se dodani broj (u biti se samo preskače - ovako mi je bilo urednije nego petljati if-ove)
+            else if(array_sum > broj)
+            {
+                num_count = num_count-1;
+                array_sum = Number(array_sum) - Number(each);
+            }
+            // Ako je broj manji od traženog pokreće se while petlja koja zbraja trenutni broj u petlji koliko god puta stane
+            else{
+                while(array_sum < broj){
+                    array_sum = Number(array_sum) + Number(each);
+                    num_count = num_count+1;
+                    //console.log(each + "<< U petlji");
+                    //console.log(array_sum + "<< Suma");
+                    //console.log(num_count + "<< num_count");
+                }
+                if(array_sum == broj){
+                    break;
+                }
+                else{
+                    num_count = num_count-1;
+                    array_sum = Number(array_sum) - Number(each);
+                }
+            }
+        }
+        // Ako je nemoguće dobiti traženu sumu ispisuje se -1
+        if(array_sum != broj) num_count = "-1";
+        // Ispis rezultata i prikaz div-a
+        document.getElementById("output").innerHTML = "output: " + num_count;
+        document.getElementById('print').style.display = "block";
+        // Reset brojača za sljedeću provjeru pošto je inicijaliziran van funkcije
+        num_count = 0;
+    }
+</script>

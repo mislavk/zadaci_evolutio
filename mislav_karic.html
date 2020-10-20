@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            #result{
+                display:none;
+            }
+            #check{
+                display:none;
+            }
+            #print{
+                display:none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="zadatak_jedan">
+            <h2>Kamen škare papir</h2>
+            <label for="game">Odaberite</label><br/>
+            <button onclick="play(0)">Kamen</button>
+            <button onclick="play(1)">Škare</button>
+            <button onclick="play(2)">Papir</button>
+            <div id="result">
+                <p id="comp_game"></p>
+                <p id="comp_winlose"></p>
+                <p id="count"></p>
+            </div>
+        </div>
+        <div id="zadatak_dva">
+            <h2>Provjera palindroma</h2>
+            <label for="sentence">Unesite rečenicu</label>
+            <input type="text" id="sentence" name="sentence" />
+            <button onclick="palindrome()">Provjeri</button>
+            <p id="check"></p>
+        </div>
+        <div id="zadatak_tri">
+            <h2>Zbrajanje polja</h2>
+            <label for="numbers">Unesite brojeve razdvojene zarezom:</label>
+            <input type="text" id="numbers" name="numbers" />
+            <label for="sum">Unesite zadani zbroj:</label>
+            <input type="number" id="sum" name="sum" />
+            <button onclick="calculate()">Izračunaj</button>
+            <div id="print">
+                <p id="input"></p>
+                <p id="output"></p>
+            </div>
+        </div>
+    </body>
+</html>
+<script>
+    var count = 0;
+    var num_count = 0;
+    function play(choice){
+        var random = Math.floor(Math.random() * Math.floor(3));
+        if(random == 0){
+            var comp_choice = "Kamen";
+        }
+        else if(random == 1){
+            var comp_choice = "Škare";
+        }
+        else{
+            var comp_choice = "Papir";
+        }
+        document.getElementById('comp_game').innerHTML = "Računalo je odigralo: " + comp_choice;
+        if(choice == random){
+            document.getElementById('comp_winlose').innerHTML = "Izjednačeno!";
+            document.getElementById("comp_winlose").style.color = "blue";
+        }
+        else if( (choice == 0 && random == 1) || (choice == 1 && random == 2) ||(choice == 2 && random == 0) ){
+            document.getElementById('comp_winlose').innerHTML = "Vi ste pobijedili!";
+            document.getElementById("comp_winlose").style.color = "green";
+            count = count + 1;
+        }
+        else{
+            document.getElementById('comp_winlose').innerHTML = "Računalo je pobijedilo!";
+            document.getElementById("comp_winlose").style.color = "red";
+        }
+        document.getElementById('result').style.display = "block";
+        document.getElementById('count').innerHTML = "Bodovi: " + count;
+    }
+    function palindrome(){
+        var check = document.getElementById("sentence").value.replace(/[^a-zA-Z]+/g, '').toLowerCase();
+        var array = check.split('');
+        var reverse_array = array.reverse();
+        var check_reverse = reverse_array.join('');
+        if(check == check_reverse){
+            document.getElementById("check").innerHTML = "Palindrom";
+        }
+        else{
+            document.getElementById("check").innerHTML = "Nije palindrom";
+        }
+        document.getElementById('result').style.display = "block";
+    }
+    function calculate(){
+        var numbers = document.getElementById("numbers").value.replace(/[^0-9,]+/g, '');
+        var array = numbers.split(',');
+        if (array.includes("")){
+            alert("Krivo uneseni brojevi!");
+            return;
+        }
+        var broj = Number(document.getElementById("sum").value.replace(/[^0-9]+/g, ''));
+        var sorted = array.sort(function(a, b){return b-a});
+        document.getElementById("input").innerHTML = "input: N = [" + array + "], B = " + broj;
+        var array_sum = 0;
+        for(i = 0; i < sorted.length; i++){
+            var each = sorted[i];
+            array_sum = Number(array_sum) + Number(each);
+            console.log(each + "<- U petlji");
+            console.log(array_sum + "<- Suma");
+            console.log(broj + "<- Trazeni");
+            num_count = num_count+1;
+            if(array_sum == broj){
+                break;
+            }
+            else if(array_sum > broj)
+            {
+                num_count = num_count-1;
+                array_sum = Number(array_sum) - Number(each);
+            }
+            else{
+                while(array_sum < broj){
+                    array_sum = Number(array_sum) + Number(each);
+                    num_count = num_count+1;
+                    console.log(each + "<< U petlji");
+                    console.log(array_sum + "<< Suma");
+                    console.log(num_count + "<< num_count");
+                }
+                if(array_sum == broj){
+                    break;
+                }
+                else{
+                    num_count = num_count-1;
+                    array_sum = Number(array_sum) - Number(each);
+                }
+            }
+        }
+        if(array_sum != broj) num_count = "-1";
+        document.getElementById("output").innerHTML = "output: " + num_count;
+        document.getElementById('print').style.display = "block";
+        num_count = 0;
+    }
+</script>
